@@ -20,6 +20,12 @@ repositories {
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
+
+    implementation 'com.amazonaws:amazon-sqs-java-messaging-lib:1.0.4'
+    implementation 'org.springframework:spring-jms'
+
+    implementation 'com.alibaba:fastjson:1.2.12'
+
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
