@@ -1,4 +1,4 @@
-package com.example.sqstest.producer.service.controller;
+package com.example.sqstest.producer.controller;
 
 import com.example.sqstest.dto.SimpleMessage;
 import com.example.sqstest.producer.service.ProducerService;

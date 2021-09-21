@@ -1,4 +1,4 @@
-package com.example.sqstest.producer.service.config;
+package com.example.sqstest.producer.config;
 
 import com.amazon.sqs.javamessaging.SQSConnectionFactory;
 import com.amazonaws.auth.AWSCredentials;
