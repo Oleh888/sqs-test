@@ -30,10 +30,13 @@ public class ProducerServiceImpl implements ProducerService {
     public void sendMessage(SimpleMessage message) {
         try {
             Message jmsMessage = new SQSTextMessage(JSON.toJSONString(message));
+            jmsMessage.setStringProperty("JMSXGroupID", String.valueOf(System.currentTimeMillis()));
             jmsTemplate.convertAndSend(queueName, jmsMessage);
             log.info("Simple message {} was sent to queue", message.getMessageId());
         } catch (JMSException e) {
             log.error("JMSException: {}", e.getMessage());
+        } catch (Exception e) {
+            log.error("Error during sending message to queue: {}", e.getMessage());
         }
     }
 

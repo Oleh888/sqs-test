@@ -1,15 +1,18 @@
-package com.example.sqstest.producer.config;
+package com.example.sqstest.config;
 
 import com.amazon.sqs.javamessaging.SQSConnectionFactory;
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.auth.DefaultAWSCredentialsProviderChain;
+import com.example.sqstest.consumer.service.SqsMessageListener;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jms.config.DefaultJmsListenerContainerFactory;
 import org.springframework.jms.core.JmsTemplate;
+import org.springframework.jms.listener.DefaultMessageListenerContainer;
 import org.springframework.jms.support.destination.DynamicDestinationResolver;
 
 import javax.jms.Session;
@@ -60,6 +63,18 @@ public class JmsConfig {
         jmsTemplate.setDeliveryPersistent(false);
         jmsTemplate.setReceiveTimeout(1);
         return jmsTemplate;
+    }
+
+    @Bean
+    @Autowired
+    public DefaultMessageListenerContainer jmsListenerContainer(SQSConnectionFactory sqsConnectionFactory,
+                                                                SqsMessageListener sqsMessageListener) {
+        DefaultMessageListenerContainer container = new DefaultMessageListenerContainer();
+        container.setReceiveTimeout(5);
+        container.setDestinationName(queueName);
+        container.setMessageListener(sqsMessageListener);
+        container.setConnectionFactory(sqsConnectionFactory);
+        return container;
     }
 
 }
