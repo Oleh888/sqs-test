@@ -12,8 +12,7 @@ import javax.jms.TextMessage;
 
 @Slf4j
 @Service
-public class SqsMessageListener implements MessageListener {
-
+public class SecondSqsMessageListener implements MessageListener {
     @Override
     public void onMessage(Message message) {
         TextMessage textMessage = (TextMessage) message;
@@ -23,6 +22,6 @@ public class SqsMessageListener implements MessageListener {
         } catch (JMSException e) {
             log.error("Json parse exception: {}", e.getMessage());
         }
-        log.info("SqsMessageListener\nSimple message was got: {}", simpleMessage.toString());
+        log.info("SecondSqsMessageListener\nSimple message was got: {}", simpleMessage.toString());
     }
 }

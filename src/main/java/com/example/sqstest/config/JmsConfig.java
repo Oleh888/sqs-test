@@ -5,6 +5,7 @@ import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.auth.DefaultAWSCredentialsProviderChain;
+import com.example.sqstest.consumer.service.SecondSqsMessageListener;
 import com.example.sqstest.consumer.service.SqsMessageListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,6 +23,12 @@ public class JmsConfig {
 
     @Value("${aws.sqs.name}")
     private String queueName;
+
+    @Value("${aws.sqs.name2}")
+    private String queueName2;
+
+    @Value("${aws.sqs.endpoint2}")
+    private String endpoint2;
 
     @Value("${aws.sqs.endpoint}")
     private String endpoint;
@@ -52,6 +59,15 @@ public class JmsConfig {
                 .withNumberOfMessagesToPrefetch(10).build();
     }
 
+    @Bean
+    public SQSConnectionFactory secondSqsConnectionFactory() {
+        return SQSConnectionFactory.builder()
+                .withAWSCredentialsProvider(new DefaultAWSCredentialsProviderChain())
+                .withEndpoint(endpoint2)
+                .withAWSCredentialsProvider(new AWSStaticCredentialsProvider(baseCredentials()))
+                .withNumberOfMessagesToPrefetch(10).build();
+    }
+
     private AWSCredentials baseCredentials() {
         return new BasicAWSCredentials(accessKey, secretKey);
     }
@@ -73,6 +89,18 @@ public class JmsConfig {
         container.setReceiveTimeout(5);
         container.setDestinationName(queueName);
         container.setMessageListener(sqsMessageListener);
+        container.setConnectionFactory(sqsConnectionFactory);
+        return container;
+    }
+
+    @Bean
+    @Autowired
+    public  DefaultMessageListenerContainer secondJmsListenerContainer(SQSConnectionFactory sqsConnectionFactory,
+                                                                          SecondSqsMessageListener secondSqsMessageListener) {
+        DefaultMessageListenerContainer container = new DefaultMessageListenerContainer();
+        container.setReceiveTimeout(5);
+        container.setDestinationName(queueName2);
+        container.setMessageListener(secondSqsMessageListener);
         container.setConnectionFactory(sqsConnectionFactory);
         return container;
     }
